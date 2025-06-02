@@ -1,0 +1,39 @@
+{
+    "id": "deno",
+    "name": "Setup Deno",
+    "version": "1.0.0",
+    "description": "Download, install, and setup specific version of Deno in your Dev Container.",
+    "documentationURL": "https://github.com/alertbox/feature-setup-deno/tree/main/src/deno",
+    "options": {
+        "version": {
+            "type": "string",
+            "proposals": [
+                "latest"
+            ],
+            "default": "latest",
+            "description": "Select or enter a version."
+        },
+        "packages": {
+            "type": "string",
+            "default": "",
+            "description": "Optional list of Node.js-compatible packages to install system-wide."
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "denoland.vscode-deno"
+            ],
+            "settings": {
+                "github.copilot.chat.codeGeneration.instructions": [
+                    {
+                        "text": "This dev container includes `deno` pre-installed and available on the `PATH` for Deno, JavaScript and Typescript development."
+                    }
+                ]
+            }
+        }
+    },
+    "dependsOn": {
+        "ghcr.io/devcontainers/features/common-utils": {}
+    }
+}
