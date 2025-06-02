@@ -42,33 +42,28 @@ check_packages ca-certificates curl dirmngr gpg gpg-agent
 
 # Normalize version tag format
 case "${VERSION}" in
-    latest | v*)
-        TAG="$VERSION"
-        ;;
-    *)
-        TAG="v${VERSION}"
-        ;;
+    latest) TAG="$(curl -s https://dl.deno.land/release-latest.txt)" ;;
+    v*)     TAG="${VERSION}"                                         ;;
+    *)      TAG="v${VERSION}"                                        ;;
 esac
 
 # Run installer as non-root user
 # If we don't already have Deno installed, install it now.
-if ! deno --version > /dev/null ; then
-  echo "Installing Deno..."
-  if [ "${DENO_VERSION}" = "latest" ]; then
-      curl -fsSL https://deno.land/install.sh | sh
-  else
-      curl -fsSL https://deno.land/install.sh | sh -s ${TAG}
-  fi
+if ! deno --version > /dev/null; then
+    echo "Installing Deno ${TAG}..."
+    su "${_REMOTE_USER}" -c "curl -fsSL https://deno.land/install.sh | sh -s -- --yes ${TAG}"
 fi
+
+INSTALL_ENV=DENO_INSTALL
+INSTALL_DIR="${!INSTALL_ENV:-${_REMOTE_USER_HOME}/.deno}"
+BIN_DIR="${INSTALL_DIR}/bin"
+EXE="${BIN_DIR}/deno"
 
 # Install global packages if specified
-# See # See https://docs.deno.com/runtime/reference/cli/install/#global-installation
+# See https://docs.deno.com/runtime/reference/cli/install/#global-installation
 if [ "${#PACKAGES[@]}" -gt 0 ]; then
     echo "Installing global packages..."
-    su "${_REMOTE_USER}" -c "${EXE} install --global --allow-net --allow-read ${PACKAGES}"
+    su "${_REMOTE_USER}" -c "$EXE install --global --allow-net --allow-read ${PACKAGES}"
 fi
-
-# Clean up installer
-rm -rf "${INSTALLER}"
 
 echo "Done!"
