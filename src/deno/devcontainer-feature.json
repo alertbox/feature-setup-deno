@@ -25,6 +25,7 @@
                 "denoland.vscode-deno"
             ],
             "settings": {
+                "deno.enable": true,
                 "github.copilot.chat.codeGeneration.instructions": [
                     {
                         "text": "This dev container includes `deno` pre-installed and available on the `PATH` for Deno, JavaScript and Typescript development."
