@@ -40,22 +40,6 @@ rm -rf /var/lib/apt/lists/*
 # Install required dependencies
 check_packages ca-certificates curl dirmngr gpg gpg-agent
 
-INSTALLER="install.sh"
-# Download the installer script
-echo "Downloading Deno installer..."
-curl "https://deno.land/${INSTALLER}" \
-    --proto '=https' \
-    --tlsv1.2 \
-    -fsSLO \
-    --compressed \
-    --retry 5 || {
-        echo "error: failed to download: ${TAG}"
-        exit 1
-    }
-
-# Set installer permissions
-chmod +x "${INSTALLER}"
-
 # Normalize version tag format
 case "${VERSION}" in
     latest | v*)
@@ -67,11 +51,15 @@ case "${VERSION}" in
 esac
 
 # Run installer as non-root user
-echo "Installing Deno ${TAG}..."
-su "${_REMOTE_USER}" -c "./${INSTALLER} ${TAG}" || {
-    echo "error: failed to install deno."
-    exit 1
-}
+# If we don't already have Deno installed, install it now.
+if ! deno --version > /dev/null ; then
+  echo "Installing Deno..."
+  if [ "${DENO_VERSION}" = "latest" ]; then
+      curl -fsSL https://deno.land/install.sh | sh
+  else
+      curl -fsSL https://deno.land/install.sh | sh -s ${TAG}
+  fi
+fi
 
 # Install global packages if specified
 # See # See https://docs.deno.com/runtime/reference/cli/install/#global-installation

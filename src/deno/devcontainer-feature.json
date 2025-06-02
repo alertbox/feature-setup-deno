@@ -1,7 +1,7 @@
 {
     "id": "deno",
     "name": "Setup Deno",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Download, install, and setup specific version of Deno in your Dev Container.",
     "documentationURL": "https://github.com/alertbox/feature-setup-deno/tree/main/src/deno",
     "options": {
