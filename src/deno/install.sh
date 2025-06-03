@@ -63,6 +63,8 @@ EXE="${BIN_DIR}/deno"
 # See https://docs.deno.com/runtime/reference/cli/install/#global-installation
 if [ -n "${PACKAGES}" ]; then
     echo "Installing global packages..."
+    # Replace commas to spaces.
+    PACKAGES=${PACKAGES//,/ }
     su "${_REMOTE_USER}" -c "$EXE install --global --allow-net --allow-read ${PACKAGES}"
 fi
 
